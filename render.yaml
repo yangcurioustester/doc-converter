@@ -1,0 +1,14 @@
+# One-click deploy on Render (https://render.com): New > Blueprint > pick this repo.
+services:
+  - type: web
+    name: doc-converter
+    runtime: docker
+    plan: free
+    healthCheckPath: /healthz
+    envVars:
+      - key: MAX_UPLOAD_MB
+        value: "25"
+      - key: MAX_PARALLEL_JOBS
+        value: "1"        # the free plan has 512 MB of memory; raise on a bigger plan
+      - key: RATE_LIMIT_PER_10_MIN
+        value: "30"

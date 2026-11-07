@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Doc Converter</title>
+<meta name="description" content="Free online converter for Pages, Word, Numbers, Excel, Keynote and PowerPoint files. Convert to PDF, Word, Excel and more from any device.">
+<style>
+:root{--bg:#f5f5f2;--card:#fff;--ink:#1b1b19;--mute:#6a6a64;--line:#e1e1db;--acc:#2f5de4;--acc-ink:#fff;--ok:#1d8a4b;--err:#c23a2b;--soft:#eef1fc}
+@media (prefers-color-scheme:dark){:root{--bg:#141413;--card:#1e1e1c;--ink:#ededea;--mute:#9b9b95;--line:#32322e;--acc:#6d8cff;--acc-ink:#0d1330;--ok:#4cc27f;--err:#ff7a6b;--soft:#1f2440}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:56px 16px 40px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:0 0 8px;letter-spacing:-.02em}
+.sub{color:var(--mute);margin:0 0 28px;font-size:17px}
+.drop{display:block;background:var(--card);border:2px dashed var(--line);border-radius:18px;padding:48px 20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:var(--acc);background:var(--soft)}
+.drop b{font-size:19px;display:block}
+.drop small{display:block;color:var(--mute);margin-top:6px}
+.btn{display:inline-block;margin-top:16px;font:inherit;font-weight:600;padding:10px 20px;border-radius:10px;background:var(--acc);color:var(--acc-ink);border:0}
+#list{margin-top:18px;display:grid;gap:10px}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.name{flex:1 1 200px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.ctrl{display:flex;align-items:center;gap:8px}
+.st{flex-basis:100%;font-size:14px;color:var(--mute);display:none}
+.st.show{display:block}.st.ok{color:var(--ok)}.st.err{color:var(--err)}
+select{font:inherit;font-size:15px;padding:7px 10px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.go,.dl{font:inherit;font-size:15px;font-weight:600;padding:7px 14px;border-radius:9px;border:0;background:var(--acc);color:var(--acc-ink);text-decoration:none;cursor:pointer}
+.go:disabled{opacity:.55;cursor:default}
+.x{background:none;border:0;color:var(--mute);font-size:20px;cursor:pointer;padding:0 4px;line-height:1}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:40px}
+.feat div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:14px;color:var(--mute)}
+.feat b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
+footer{color:var(--mute);font-size:13px;margin-top:32px;text-align:center}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:s .7s linear infinite;vertical-align:-1px;margin-right:6px}
+@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Convert any document, on any device</h1>
+  <p class="sub">Pages, Word, Numbers, Excel, Keynote and PowerPoint files to PDF, Word, Excel and more. Free, no sign-up.</p>
+
+  <label class="drop" id="drop">
+    <input type="file" id="pick" multiple hidden>
+    <b>Drop files here</b>
+    <small>.pages · .docx · .doc · .odt · .rtf · .txt · .numbers · .xlsx · .csv · .key · .pptx and more</small>
+    <span class="btn">Choose files</span>
+    <small>Up to {{ max_mb }} MB per file</small>
+  </label>
+
+  <div id="list"></div>
+
+  <div class="feat">
+    <div><b>Works everywhere</b>Windows, Mac, Linux, iPhone, Android. Just a browser.</div>
+    <div><b>Private</b>Files are deleted the moment your conversion finishes.</div>
+    <div><b>Apple files too</b>Open .pages, .numbers and .key files without an Apple device.</div>
+  </div>
+  <footer>Conversions are powered by LibreOffice. Word, Excel and PowerPoint files convert very accurately. Apple files with simple text convert well; Pages templates with columns, text boxes or drawings may lose their layout.</footer>
+</main>
+
+<script>
+let FORMATS = null;
+const list = document.getElementById('list'), drop = document.getElementById('drop'), pick = document.getElementById('pick');
+const ready = fetch('/api/formats').then(r => r.json()).then(j => FORMATS = j);
+const extOf = n => n.includes('.') ? n.split('.').pop().toLowerCase() : '';
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+['dragenter','dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(t => drop.addEventListener(t, () => drop.classList.remove('over')));
+drop.addEventListener('drop', e => { e.preventDefault(); add(e.dataTransfer.files); });
+pick.addEventListener('change', () => { add(pick.files); pick.value = ''; });
+
+async function add(files) {
+  await ready;
+  for (const file of files) {
+    const row = el('div', 'row'), st = el('div', 'st'), x = el('button', 'x', '×');
+    x.title = 'Remove'; x.onclick = () => row.remove();
+    row.append(el('div', 'name', file.name));
+    const fam = FORMATS.inputs[extOf(file.name)];
+    if (!fam) {
+      st.className = 'st show err'; st.textContent = 'This file type is not supported.';
+      row.append(x, st); list.append(row); continue;
+    }
+    if (file.size > FORMATS.maxMB * 1024 * 1024) {
+      st.className = 'st show err'; st.textContent = `Too large. The limit is ${FORMATS.maxMB} MB.`;
+      row.append(x, st); list.append(row); continue;
+    }
+    const ctrl = el('div', 'ctrl'), sel = el('select'), go = el('button', 'go', 'Convert');
+    sel.setAttribute('aria-label', 'Convert to');
+    for (const o of FORMATS.outputs[fam]) { const op = el('option', null, 'to ' + o.toUpperCase()); op.value = o; sel.append(op); }
+    go.onclick = () => convert(file, sel, go, st, ctrl);
+    ctrl.append(sel, go, x); row.append(ctrl, st); list.append(row);
+  }
+}
+
+async function convert(file, sel, go, st, ctrl) {
+  go.disabled = sel.disabled = true;
+  st.className = 'st show'; st.innerHTML = '<span class="spin"></span>Converting… this can take up to a minute.';
+  try {
+    const body = new FormData(); body.append('file', file); body.append('to', sel.value);
+    const r = await fetch('/api/convert', { method: 'POST', body });
+    if (!r.ok) {
+      let msg = 'Something went wrong. Please try again.';
+      try { msg = (await r.json()).error || msg; } catch (_) {}
+      throw new Error(msg);
+    }
+    const blob = await r.blob();
+    const name = file.name.replace(/\.[^.]+$/, '') + '.' + sel.value;
+    const a = el('a', 'dl', 'Download'); a.href = URL.createObjectURL(blob); a.download = name;
+    go.replaceWith(a); sel.disabled = true;
+    st.className = 'st show ok'; st.textContent = 'Done: ' + name;
+    a.click();
+  } catch (e) {
+    st.className = 'st show err'; st.textContent = e.message;
+    go.disabled = sel.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
