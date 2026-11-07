@@ -1,15 +1,20 @@
 # Doc Converter
 
-A free, public web converter. Anyone can open it in a browser on Windows, Mac, Linux, iPhone or Android and convert:
+A free, public web converter. Anyone can open it in a browser on Windows, Mac, Linux, iPhone or Android,
+drop a file, and the site detects its type and offers every format it can become.
 
 | From | To |
 |---|---|
-| .pages .docx .doc .odt .rtf .txt .wpd .html | PDF, Word (.docx), .odt, .rtf, .txt |
-| .numbers .xlsx .xls .ods .csv | PDF, Excel (.xlsx), .ods, .csv |
-| .key .pptx .ppt .odp | PDF, PowerPoint (.pptx), .odp |
+| Documents: .pages .docx .doc .odt .rtf .txt .html .wpd .md | PDF, DOCX, DOC, ODT, RTF, TXT, HTML, EPUB, PNG, JPG |
+| PDF | DOCX, DOC, ODT, RTF, TXT, HTML, EPUB, PNG, JPG |
+| Spreadsheets: .numbers .xlsx .xls .ods .csv | XLSX, XLS, ODS, CSV, PDF, HTML, PNG, JPG |
+| Presentations: .key .pptx .ppt .odp | PPTX, PPT, ODP, PDF, PNG, JPG |
+| Images: .jpg .png .webp .gif .bmp .tiff .heic .ico | JPG, PNG, WEBP, GIF, BMP, TIFF, ICO, PDF |
 
-Conversions run on the server with LibreOffice, which includes an importer for Apple's iWork formats. No Apple device is needed.
-Uploaded files are deleted as soon as each conversion finishes.
+Multi-page exports to PNG/JPG download as a zip with one image per page.
+
+Engines: LibreOffice (Office + Apple iWork files), pdf2docx (PDF to Word), PyMuPDF (PDF to images/text),
+Pillow + pillow-heif (images, including iPhone HEIC photos). Uploaded files are deleted as soon as each conversion finishes.
 
 ## Put it online (free)
 

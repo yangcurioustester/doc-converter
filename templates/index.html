@@ -4,48 +4,87 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Doc Converter</title>
-<meta name="description" content="Free online converter for Pages, Word, Numbers, Excel, Keynote and PowerPoint files. Convert to PDF, Word, Excel and more from any device.">
+<meta name="description" content="Free online file converter. Convert Pages, Word, PDF, Excel, Numbers, PowerPoint, Keynote and images (including iPhone HEIC) from any device.">
 <style>
-:root{--bg:#f5f5f2;--card:#fff;--ink:#1b1b19;--mute:#6a6a64;--line:#e1e1db;--acc:#2f5de4;--acc-ink:#fff;--ok:#1d8a4b;--err:#c23a2b;--soft:#eef1fc}
-@media (prefers-color-scheme:dark){:root{--bg:#141413;--card:#1e1e1c;--ink:#ededea;--mute:#9b9b95;--line:#32322e;--acc:#6d8cff;--acc-ink:#0d1330;--ok:#4cc27f;--err:#ff7a6b;--soft:#1f2440}}
+:root{--bg:#f4f4f1;--card:#fff;--raise:#fafaf8;--ink:#1b1b19;--mute:#6a6a64;--line:#e1e1db;--acc:#2f5de4;--acc-ink:#fff;--soft:#eef1fc;--ok:#1d8a4b;--err:#c23a2b;--shadow:0 12px 40px rgba(0,0,0,.14)}
+@media (prefers-color-scheme:dark){:root{--bg:#141413;--card:#1e1e1c;--raise:#252523;--ink:#ededea;--mute:#9b9b95;--line:#34342f;--acc:#6d8cff;--acc-ink:#0d1330;--soft:#1f2440;--ok:#4cc27f;--err:#ff7a6b;--shadow:0 12px 40px rgba(0,0,0,.5)}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-main{max-width:720px;margin:0 auto;padding:56px 16px 40px}
-h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:0 0 8px;letter-spacing:-.02em}
-.sub{color:var(--mute);margin:0 0 28px;font-size:17px}
-.drop{display:block;background:var(--card);border:2px dashed var(--line);border-radius:18px;padding:48px 20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:880px;margin:0 auto;padding:48px 16px 120px}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.12;margin:0 0 8px;letter-spacing:-.02em}
+.sub{color:var(--mute);margin:0 0 28px;font-size:17px;max-width:620px}
+button{font:inherit;color:inherit}
+.drop{display:block;background:var(--card);border:2px dashed var(--line);border-radius:18px;padding:40px 20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
 .drop:hover,.drop.over{border-color:var(--acc);background:var(--soft)}
 .drop b{font-size:19px;display:block}
 .drop small{display:block;color:var(--mute);margin-top:6px}
-.btn{display:inline-block;margin-top:16px;font:inherit;font-weight:600;padding:10px 20px;border-radius:10px;background:var(--acc);color:var(--acc-ink);border:0}
-#list{margin-top:18px;display:grid;gap:10px}
-.row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
-.name{flex:1 1 200px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
-.ctrl{display:flex;align-items:center;gap:8px}
-.st{flex-basis:100%;font-size:14px;color:var(--mute);display:none}
-.st.show{display:block}.st.ok{color:var(--ok)}.st.err{color:var(--err)}
-select{font:inherit;font-size:15px;padding:7px 10px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
-.go,.dl{font:inherit;font-size:15px;font-weight:600;padding:7px 14px;border-radius:9px;border:0;background:var(--acc);color:var(--acc-ink);text-decoration:none;cursor:pointer}
-.go:disabled{opacity:.55;cursor:default}
-.x{background:none;border:0;color:var(--mute);font-size:20px;cursor:pointer;padding:0 4px;line-height:1}
-.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:40px}
-.feat div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:14px;color:var(--mute)}
-.feat b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
-footer{color:var(--mute);font-size:13px;margin-top:32px;text-align:center}
+.pill{display:inline-block;margin-top:14px;font-weight:600;padding:10px 22px;border-radius:10px;background:var(--acc);color:var(--acc-ink)}
+#list{margin-top:16px;display:grid;gap:10px}
+.row{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center}
+.file{display:flex;align-items:center;gap:12px;min-width:0}
+.ico{flex:none;width:40px;height:40px;border-radius:9px;background:var(--soft);color:var(--acc);display:grid;place-items:center;font-size:11px;font-weight:700;letter-spacing:.03em}
+.meta{min-width:0}
+.name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.info{font-size:13px;color:var(--mute)}
+.ctrl{display:flex;align-items:center;gap:8px;justify-self:end}
+.to{font-size:12px;letter-spacing:.12em;color:var(--mute);text-transform:uppercase}
+.fmt{display:inline-flex;align-items:center;gap:6px;min-width:96px;justify-content:space-between;padding:8px 12px;border-radius:9px;border:1px solid var(--line);background:var(--raise);cursor:pointer;font-weight:600}
+.fmt.empty{color:var(--mute);font-weight:500}
+.fmt:disabled{cursor:default;opacity:.7}
+.fmt svg{width:12px;height:12px;opacity:.6}
+.go,.dl{font-size:15px;font-weight:600;padding:8px 16px;border-radius:9px;border:0;background:var(--acc);color:var(--acc-ink);text-decoration:none;cursor:pointer;white-space:nowrap}
+.go:disabled{opacity:.45;cursor:default}
+.dl{background:var(--ok);color:#fff}
+.x{background:none;border:0;color:var(--mute);font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
+.st{grid-column:1/-1;font-size:14px;color:var(--mute)}
+.st:empty{display:none}.st.ok{color:var(--ok)}.st.err{color:var(--err)}
 .spin{display:inline-block;width:12px;height:12px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:s .7s linear infinite;vertical-align:-1px;margin-right:6px}
 @keyframes s{to{transform:rotate(360deg)}}
+@media (max-width:620px){.row{grid-template-columns:1fr}.ctrl{justify-self:stretch}.fmt{flex:1}}
+
+/* format picker */
+#picker{position:absolute;z-index:20;width:440px;max-width:calc(100vw - 32px);background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;display:none}
+#picker.open{display:block}
+.search{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.search input{flex:1;border:0;background:none;color:var(--ink);font:inherit;outline:none}
+.search svg{width:16px;height:16px;color:var(--mute)}
+.panes{display:grid;grid-template-columns:150px 1fr;min-height:220px}
+.cats{border-right:1px solid var(--line);padding:6px}
+.cat{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;padding:9px 10px;border:0;border-radius:8px;background:none;cursor:pointer}
+.cat:hover{background:var(--raise)}.cat.on{background:var(--soft);color:var(--acc);font-weight:600}
+.opts{padding:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;align-content:start}
+.opt{padding:10px 6px;border:1px solid var(--line);border-radius:8px;background:var(--raise);cursor:pointer;font-weight:700;font-size:14px;letter-spacing:.03em}
+.opt:hover,.opt:focus-visible{border-color:var(--acc);color:var(--acc);outline:none}
+.opt.on{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.none{color:var(--mute);font-size:14px;padding:8px}
+@media (max-width:620px){
+  #picker{position:fixed;left:0!important;right:0;bottom:0;top:auto!important;width:auto;max-width:none;border-radius:16px 16px 0 0}
+  .panes{grid-template-columns:1fr}
+  .cats{display:flex;align-items:center;gap:4px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .cat{width:auto;white-space:nowrap}.cat span{display:none}
+  .opts{padding-bottom:24px}
+}
+
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px;display:none}
+.bar.show{display:block}
+.bar div{max-width:880px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.bar span{color:var(--mute);font-size:14px}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:40px}
+.feat div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:14px;color:var(--mute)}
+.feat b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
+footer{color:var(--mute);font-size:13px;margin-top:28px;text-align:center}
 </style>
 </head>
 <body>
 <main>
-  <h1>Convert any document, on any device</h1>
-  <p class="sub">Pages, Word, Numbers, Excel, Keynote and PowerPoint files to PDF, Word, Excel and more. Free, no sign-up.</p>
+  <h1>Convert any file, on any device</h1>
+  <p class="sub">Drop a file and pick what you want it to become. Documents, PDFs, spreadsheets, presentations and images. Free, no sign-up.</p>
 
   <label class="drop" id="drop">
     <input type="file" id="pick" multiple hidden>
     <b>Drop files here</b>
-    <small>.pages · .docx · .doc · .odt · .rtf · .txt · .numbers · .xlsx · .csv · .key · .pptx and more</small>
-    <span class="btn">Choose files</span>
+    <small>PDF · Pages · Word · Numbers · Excel · Keynote · PowerPoint · JPG · PNG · HEIC and more</small>
+    <span class="pill">Choose files</span>
     <small>Up to {{ max_mb }} MB per file</small>
   </label>
 
@@ -54,67 +93,157 @@ footer{color:var(--mute);font-size:13px;margin-top:32px;text-align:center}
   <div class="feat">
     <div><b>Works everywhere</b>Windows, Mac, Linux, iPhone, Android. Just a browser.</div>
     <div><b>Private</b>Files are deleted the moment your conversion finishes.</div>
-    <div><b>Apple files too</b>Open .pages, .numbers and .key files without an Apple device.</div>
+    <div><b>Apple files too</b>Open .pages, .numbers, .key and iPhone HEIC photos anywhere.</div>
   </div>
-  <footer>Conversions are powered by LibreOffice. Word, Excel and PowerPoint files convert very accurately. Apple files with simple text convert well; Pages templates with columns, text boxes or drawings may lose their layout.</footer>
+  <footer>Word, Excel and PowerPoint files convert very accurately. Pages templates with columns or drawings, and PDFs to Word, may need small touch-ups.</footer>
 </main>
 
+<div id="picker" role="dialog" aria-label="Choose output format">
+  <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Search format" autocomplete="off"></div>
+  <div class="panes"><div class="cats" id="cats"></div><div class="opts" id="opts"></div></div>
+</div>
+
+<div class="bar" id="bar"><div><span id="barText"></span><button class="go" id="all">Convert all</button></div></div>
+
 <script>
-let FORMATS = null;
-const list = document.getElementById('list'), drop = document.getElementById('drop'), pick = document.getElementById('pick');
-const ready = fetch('/api/formats').then(r => r.json()).then(j => FORMATS = j);
-const extOf = n => n.includes('.') ? n.split('.').pop().toLowerCase() : '';
+let F = null;
+const $ = id => document.getElementById(id);
+const list = $('list'), drop = $('drop'), pick = $('pick'), picker = $('picker'), q = $('q');
+const ready = fetch('/api/formats').then(r => r.json()).then(j => F = j);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const extOf = n => n.includes('.') ? n.split('.').pop().toLowerCase() : '';
+const size = b => b < 1024 * 1024 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / 1048576).toFixed(1) + ' MB';
+const CHEVRON = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 4.5 3 3 3-3"/></svg>';
+const items = [];
 
 ['dragenter','dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
 ['dragleave','drop'].forEach(t => drop.addEventListener(t, () => drop.classList.remove('over')));
 drop.addEventListener('drop', e => { e.preventDefault(); add(e.dataTransfer.files); });
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', e => { e.preventDefault(); if (e.target.closest('#drop')) return; add(e.dataTransfer.files); });
 pick.addEventListener('change', () => { add(pick.files); pick.value = ''; });
 
 async function add(files) {
   await ready;
+  let first = null;
   for (const file of files) {
-    const row = el('div', 'row'), st = el('div', 'st'), x = el('button', 'x', '×');
-    x.title = 'Remove'; x.onclick = () => row.remove();
-    row.append(el('div', 'name', file.name));
-    const fam = FORMATS.inputs[extOf(file.name)];
-    if (!fam) {
-      st.className = 'st show err'; st.textContent = 'This file type is not supported.';
-      row.append(x, st); list.append(row); continue;
+    const ext = extOf(file.name), info = F.inputs[ext];
+    const it = { file, ext, target: null, state: 'idle' };
+    const row = el('div', 'row'), fileBox = el('div', 'file'), meta = el('div', 'meta');
+    fileBox.append(el('div', 'ico', (ext || '?').slice(0, 4).toUpperCase()), meta);
+    meta.append(el('div', 'name', file.name));
+    const st = el('div', 'st'), x = el('button', 'x', '×');
+    x.title = 'Remove'; x.onclick = () => { row.remove(); items.splice(items.indexOf(it), 1); closePicker(); updateBar(); };
+    it.row = row; it.st = st;
+    if (!info) {
+      meta.append(el('div', 'info', size(file.size)));
+      st.className = 'st err'; st.textContent = ext ? `.${ext} files aren't supported yet.` : 'This file has no extension, so its type is unknown.';
+      const c = el('div', 'ctrl'); c.append(x); row.append(fileBox, c, st); list.append(row); continue;
     }
-    if (file.size > FORMATS.maxMB * 1024 * 1024) {
-      st.className = 'st show err'; st.textContent = `Too large. The limit is ${FORMATS.maxMB} MB.`;
-      row.append(x, st); list.append(row); continue;
+    meta.append(el('div', 'info', `${ext.toUpperCase()} · ${info.kind} · ${size(file.size)}`));
+    if (file.size > F.maxMB * 1048576) {
+      st.className = 'st err'; st.textContent = `Too large. The limit is ${F.maxMB} MB.`;
+      const c = el('div', 'ctrl'); c.append(x); row.append(fileBox, c, st); list.append(row); continue;
     }
-    const ctrl = el('div', 'ctrl'), sel = el('select'), go = el('button', 'go', 'Convert');
-    sel.setAttribute('aria-label', 'Convert to');
-    for (const o of FORMATS.outputs[fam]) { const op = el('option', null, 'to ' + o.toUpperCase()); op.value = o; sel.append(op); }
-    go.onclick = () => convert(file, sel, go, st, ctrl);
-    ctrl.append(sel, go, x); row.append(ctrl, st); list.append(row);
+    const ctrl = el('div', 'ctrl'), fmt = el('button', 'fmt empty'), go = el('button', 'go', 'Convert');
+    fmt.innerHTML = 'Select…' + CHEVRON; fmt.setAttribute('aria-haspopup', 'dialog');
+    fmt.onclick = e => { e.stopPropagation(); openPicker(it); };
+    go.disabled = true; go.onclick = () => convert(it);
+    it.fmt = fmt; it.go = go; it.ctrl = ctrl;
+    ctrl.append(el('span', 'to', 'to'), fmt, go, x);
+    row.append(fileBox, ctrl, st); list.append(row); items.push(it);
+    first = first || it;
   }
+  updateBar();
+  if (first) openPicker(first);
 }
 
-async function convert(file, sel, go, st, ctrl) {
-  go.disabled = sel.disabled = true;
-  st.className = 'st show'; st.innerHTML = '<span class="spin"></span>Converting… this can take up to a minute.';
+/* ---------- picker ---------- */
+let active = null, activeCat = null;
+function openPicker(it) {
+  if (it.state === 'busy' || it.state === 'done') return;
+  active = it; q.value = '';
+  const cats = F.categories.filter(c => it.ext && F.inputs[it.ext].targets.some(t => F.categoryOf[t] === c));
+  const own = F.inputs[it.ext].kind;  // open on the file's own category first (e.g. Image for a photo)
+  activeCat = it.target ? F.categoryOf[it.target] : (cats.includes(own) ? own : cats[0]);
+  renderCats(cats); renderOpts();
+  const r = it.fmt.getBoundingClientRect();
+  picker.classList.add('open');
+  const w = picker.offsetWidth;
+  picker.style.top = (window.scrollY + r.bottom + 6) + 'px';
+  picker.style.left = Math.max(16, Math.min(window.scrollX + r.right - w, window.innerWidth - w - 16)) + 'px';
+  if (matchMedia('(min-width:621px)').matches) q.focus();
+}
+function closePicker() { picker.classList.remove('open'); active = null; }
+function renderCats(cats) {
+  const box = $('cats'); box.innerHTML = '';
+  for (const c of cats) {
+    const b = el('button', 'cat' + (c === activeCat ? ' on' : ''));
+    b.innerHTML = `${c}<span>›</span>`;
+    b.onclick = () => { activeCat = c; q.value = ''; renderCats(cats); renderOpts(); };
+    box.append(b);
+  }
+}
+function renderOpts() {
+  const box = $('opts'); box.innerHTML = '';
+  const term = q.value.trim().toLowerCase().replace(/^\./, '');
+  const all = F.inputs[active.ext].targets;
+  const shown = term ? all.filter(t => t.includes(term) || (F.descriptions[t] || '').toLowerCase().includes(term))
+                     : all.filter(t => F.categoryOf[t] === activeCat);
+  if (!shown.length) { box.append(el('div', 'none', 'No matching format.')); return; }
+  for (const t of shown) {
+    const b = el('button', 'opt' + (t === active.target ? ' on' : ''), t.toUpperCase());
+    b.title = F.descriptions[t] || t;
+    b.onclick = () => choose(active, t);
+    box.append(b);
+  }
+}
+q.addEventListener('input', renderOpts);
+q.addEventListener('keydown', e => { if (e.key === 'Enter') { const b = $('opts').querySelector('.opt'); if (b) b.click(); } });
+document.addEventListener('click', e => { if (active && !picker.contains(e.target)) closePicker(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePicker(); });
+window.addEventListener('resize', closePicker);
+
+function choose(it, t) {
+  it.target = t;
+  it.fmt.classList.remove('empty'); it.fmt.innerHTML = t.toUpperCase() + CHEVRON; it.fmt.title = F.descriptions[t] || '';
+  it.go.disabled = false; it.st.className = 'st'; it.st.textContent = '';
+  closePicker(); updateBar();
+}
+
+/* ---------- convert ---------- */
+function updateBar() {
+  const ready = items.filter(i => i.state === 'idle' && i.target);
+  const waiting = items.filter(i => i.state === 'idle' && !i.target);
+  $('bar').classList.toggle('show', items.filter(i => i.state === 'idle').length > 1);
+  $('barText').textContent = waiting.length ? `${waiting.length} file${waiting.length > 1 ? 's' : ''} still need a format` : `${ready.length} files ready`;
+  $('all').disabled = !ready.length;
+}
+$('all').onclick = async () => { for (const it of items.filter(i => i.state === 'idle' && i.target)) await convert(it, false); };
+
+async function convert(it, autoDownload = true) {
+  it.state = 'busy'; it.fmt.disabled = it.go.disabled = true; updateBar();
+  it.st.className = 'st'; it.st.innerHTML = '<span class="spin"></span>Converting… this can take up to a minute.';
   try {
-    const body = new FormData(); body.append('file', file); body.append('to', sel.value);
+    const body = new FormData(); body.append('file', it.file); body.append('to', it.target);
     const r = await fetch('/api/convert', { method: 'POST', body });
     if (!r.ok) {
       let msg = 'Something went wrong. Please try again.';
       try { msg = (await r.json()).error || msg; } catch (_) {}
       throw new Error(msg);
     }
-    const blob = await r.blob();
-    const name = file.name.replace(/\.[^.]+$/, '') + '.' + sel.value;
+    const blob = await r.blob(), stem = it.file.name.replace(/\.[^.]+$/, '');
+    const zip = blob.type.includes('zip');
+    const name = zip ? `${stem}-${it.target}.zip` : `${stem}.${it.target}`;
     const a = el('a', 'dl', 'Download'); a.href = URL.createObjectURL(blob); a.download = name;
-    go.replaceWith(a); sel.disabled = true;
-    st.className = 'st show ok'; st.textContent = 'Done: ' + name;
-    a.click();
+    it.go.replaceWith(a); it.state = 'done';
+    it.st.className = 'st ok'; it.st.textContent = `Done: ${name} (${size(blob.size)})` + (zip ? ' · one image per page' : '');
+    if (autoDownload) a.click();
   } catch (e) {
-    st.className = 'st show err'; st.textContent = e.message;
-    go.disabled = sel.disabled = false;
+    it.state = 'idle'; it.st.className = 'st err'; it.st.textContent = e.message;
+    it.fmt.disabled = it.go.disabled = false;
   }
+  updateBar();
 }
 </script>
 </body>
